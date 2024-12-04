@@ -5,11 +5,11 @@ export const REMOVE_PROFILE = "profile/removed";
 // Action creator for adding a profile
 export const addProfile = (profile) => ({
   type: ADD_PROFILE,
-  payload: profile, // Use the profile passed as an argument
+  payload: profile,
 });
 
 // Action creator for removing a profile
 export const removeProfile = (id) => ({
   type: REMOVE_PROFILE,
-  payload: { id }, // Use the id passed as an argument
+  payload: id, // Directly use the id as payload
 });

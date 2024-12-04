@@ -1,16 +1,9 @@
 import { createStore } from "redux";
 import profileReducer from "./profileReducer";
-import { addProfile } from "./actions";
+import { addProfile, removeProfile } from "./actions";
 
 // Create the Redux store
 export const store = createStore(profileReducer);
-
-// Subscribe to store updates
-store.subscribe(() => {
-  const state = store.getState();
-  renderProfiles(state.profiles);
-  updateAverageAge(state.averageAge);
-});
 
 // Initial profiles
 const initialProfiles = [
@@ -22,6 +15,37 @@ const initialProfiles = [
 // Dispatch initial profiles to the store
 initialProfiles.forEach((profile) => {
   store.dispatch(addProfile(profile));
+});
+
+// Function to render profiles
+const renderProfiles = () => {
+  const state = store.getState();
+  const profileListContainer = document.getElementById("profileList");
+  profileListContainer.innerHTML = ""; // Clear existing profiles
+  const ul = document.createElement("ul");
+
+  state.profiles.forEach((profile) => {
+    const li = document.createElement("li");
+    li.textContent = `${profile.name}, Age: ${profile.age}`;
+    ul.appendChild(li);
+  });
+
+  profileListContainer.appendChild(ul);
+  updateAverageAge(); // Update average age after rendering profiles
+};
+
+// Function to update average age
+const updateAverageAge = () => {
+  const state = store.getState();
+  const averageAgeElement = document.getElementById("averageAge");
+  averageAgeElement.textContent = state.averageAge
+    ? state.averageAge.toFixed(2)
+    : "N/A"; // Display with 2 decimal places or 'N/A' if undefined
+};
+
+// Subscribe to store updates
+store.subscribe(() => {
+  renderProfiles(); // Call renderProfiles on every state change
 });
 
 // Event listener for adding profiles
@@ -47,23 +71,17 @@ document
     event.target.reset();
   });
 
-// Function to render profiles
-const renderProfiles = (profiles) => {
-  const profileListContainer = document.getElementById("profileList");
-  profileListContainer.innerHTML = ""; // Clear existing profiles
-  const ul = document.createElement("ul");
+// Event listener for removing profiles
+document.getElementById("removeProfileBtn").addEventListener("click", () => {
+  const idToRemove = parseInt(document.getElementById("removeProfileId").value);
+  // Validate input
+  if (!idToRemove) {
+    alert("Please enter a valid ID to remove.");
+    return;
+  }
 
-  profiles.forEach((profile) => {
-    const li = document.createElement("li");
-    li.textContent = `${profile.name}, Age: ${profile.age}`;
-    ul.appendChild(li);
-  });
+  store.dispatch(removeProfile(idToRemove)); // Dispatch removeProfile action
 
-  profileListContainer.appendChild(ul);
-};
-
-// Function to update average age
-const updateAverageAge = (averageAge) => {
-  const averageAgeElement = document.getElementById("averageAge");
-  averageAgeElement.textContent = averageAge ? averageAge.toFixed(2) : "N/A"; // Display with 2 decimal places or 'N/A' if undefined
-};
+  // Clear the input field
+  document.getElementById("removeProfileId").value = "";
+});

@@ -1,4 +1,5 @@
 import { ADD_PROFILE, REMOVE_PROFILE } from "./actions";
+
 // profileReducer.js
 const initialState = { profiles: [], averageAge: 0 };
 
@@ -14,7 +15,7 @@ const profileReducer = (state = initialState, action) => {
 
     case REMOVE_PROFILE:
       const updatedProfiles = state.profiles.filter(
-        (profile) => profile.id !== action.payload.id
+        (profile) => profile.id !== action.payload // Access id directly from payload
       );
       return {
         ...state,
